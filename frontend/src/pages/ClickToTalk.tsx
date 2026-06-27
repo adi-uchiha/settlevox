@@ -98,6 +98,9 @@ export function ClickToTalk() {
           </div>
           <CardDescription className="text-muted-foreground mt-2 text-base">
             Experience our AI Legal Intake Agent. Select the phone number below and SettleVox will call you immediately.
+            <span className="block mt-2 text-sm text-red-500 font-bold">
+              (Note: Due to Twilio Free Tier restrictions, outbound calling is locked to this pre-verified test number.)
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -167,120 +170,128 @@ export function ClickToTalk() {
         )}
       </Card>
 
-      <div className="w-full max-w-3xl space-y-6">
-        <h3 className="text-xl font-display font-medium text-foreground px-1">Technical Architecture: Challenges & Improvements</h3>
+      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle>Current Limitations</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-              <div>
-                <strong className="text-foreground">Network & API Latency:</strong>
-                <p className="mt-1">Noticeable conversational latency exists due to transatlantic transit times (US-hosted Twilio edge servers communicating with local/regional processing nodes) compounded by sequential third-party API hops between Cartesia (STT/TTS) and Groq (LLM).</p>
-              </div>
-              <div>
-                <strong className="text-foreground">Static Phone Numbers:</strong>
-                <p className="mt-1">Due to Twilio's Free Tier restrictions, outbound calling is strictly locked to pre-verified Caller IDs. Dynamic number inputs are disabled to prevent Twilio from automatically rejecting the call.</p>
-              </div>
-              <div>
-                <strong className="text-foreground">WebSocket Transitions:</strong>
-                <p className="mt-1">Raw 8kHz µ-law audio from Twilio requires continuous chunking, buffering, and repacking to bridge communication with Cartesia's WebSockets, adding overhead.</p>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Left Column: Technical Architecture */}
+        <div className="w-full space-y-6">
+          <h3 className="text-xl font-display font-medium text-foreground px-1">Technical Architecture: Challenges & Improvements</h3>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <Card className="border-border bg-card">
+              <CardHeader>
+                <CardTitle>Current Limitations</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <div>
+                  <strong className="text-foreground">Network & API Latency:</strong>
+                  <p className="mt-1">Noticeable conversational latency exists due to transatlantic transit times (US-hosted Twilio edge servers communicating with local/regional processing nodes) compounded by sequential third-party API hops between Cartesia (STT/TTS) and Groq (LLM).</p>
+                </div>
+                <div>
+                  <strong className="text-foreground">Static Phone Numbers:</strong>
+                  <p className="mt-1">Due to Twilio's Free Tier restrictions, outbound calling is strictly locked to pre-verified Caller IDs. Dynamic number inputs are disabled to prevent Twilio from automatically rejecting the call.</p>
+                </div>
+                <div>
+                  <strong className="text-foreground">WebSocket Transitions:</strong>
+                  <p className="mt-1">Raw 8kHz µ-law audio from Twilio requires continuous chunking, buffering, and repacking to bridge communication with Cartesia's WebSockets, adding overhead.</p>
+                </div>
+              </CardContent>
+            </Card>
 
+            <Card className="border-border bg-card">
+              <CardHeader>
+                <CardTitle>Future Improvements</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <div>
+                  <strong className="text-foreground">Edge Colocation:</strong>
+                  <p className="mt-1">Deploying the Node.js orchestrator server directly to US East (AWS/Vercel) adjacent to Twilio's primary signaling edge would eliminate hundreds of milliseconds of geographical WebSocket transit latency.</p>
+                </div>
+                <div>
+                  <strong className="text-foreground">Token-Level Streaming:</strong>
+                  <p className="mt-1">Currently, the LLM buffers responses until a structural delimiter is hit. Streaming tokens directly into Cartesia Sonic's TTS context buffer would allow near-instantaneous responses and faster barge-in handling.</p>
+                </div>
+                <div>
+                  <strong className="text-foreground">Paid Telephony Tier:</strong>
+                  <p className="mt-1">Upgrading to a paid Twilio account or SIP trunk provider would unlock global SMS routing and allow any user to input their custom phone number for testing without pre-verification limits.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Right Column: Demo Test Cases */}
+        <div className="w-full space-y-6">
+          <h3 className="text-xl font-display font-medium text-foreground px-1">Supported Demo Test Cases</h3>
+          
           <Card className="border-border bg-card">
             <CardHeader>
-              <CardTitle>Future Improvements</CardTitle>
+              <CardDescription className="text-muted-foreground text-base">Try these scenarios during the demo to test the agent's edge case handling capabilities.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-              <div>
-                <strong className="text-foreground">Edge Colocation:</strong>
-                <p className="mt-1">Deploying the Node.js orchestrator server directly to US East (AWS/Vercel) adjacent to Twilio's primary signaling edge would eliminate hundreds of milliseconds of geographical WebSocket transit latency.</p>
-              </div>
-              <div>
-                <strong className="text-foreground">Token-Level Streaming:</strong>
-                <p className="mt-1">Currently, the LLM buffers responses until a structural delimiter is hit. Streaming tokens directly into Cartesia Sonic's TTS context buffer would allow near-instantaneous responses and faster barge-in handling.</p>
-              </div>
-              <div>
-                <strong className="text-foreground">Paid Telephony Tier:</strong>
-                <p className="mt-1">Upgrading to a paid Twilio account or SIP trunk provider would unlock global SMS routing and allow any user to input their custom phone number for testing without pre-verification limits.</p>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <CheckCircleIcon size={24} className="text-green-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">1. The "Golden Path"</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Provide details for a clear-cut auto accident (rear-ended, injured, other party at fault). The agent will smoothly gather all required information step-by-step, qualify the lead, and proceed to wrap-up.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <XCircleIcon size={24} className="text-red-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">2. The Unqualified Lead</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Describe an incident with no third-party liability (e.g., slipping in your own driveway). The agent will recognize the criteria mismatch and gracefully reject the lead without offering legal advice.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <WarningCircleIcon size={24} className="text-amber-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">3. The Barge-In (Interruption)</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Interrupt the agent mid-sentence with an out-of-band question (e.g., "Wait, are you a robot?"). The system will instantly halt audio playback, address the question, and seamlessly return to the intake script.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <FastForwardIcon size={24} className="text-blue-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">4. The Over-Sharer (Fast-Forwarding)</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Provide multiple pieces of information (incident, injuries, liability) in one breath. The underlying FSM will extract all entities concurrently and fast-forward past redundant questions.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <UserMinusIcon size={24} className="text-purple-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">5. Contact Refusal (Zod Fallbacks)</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Refuse to provide your name or email when asked. The system will leverage fallback schemas to log the fields as "REFUSED" and continue the flow without getting trapped in an infinite loop.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                  <MicrophoneSlashIcon size={24} className="text-rose-500 mt-0.5 shrink-0" weight="fill" />
+                  <div>
+                    <strong className="text-foreground block mb-1">6. Recording Refusal (TCPA)</strong>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Say "No" when the agent asks for permission to record the call during the greeting. The agent will strictly enforce compliance by acknowledging the refusal and immediately terminating the call.
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-
-        <Card className="border-border bg-card mt-6">
-          <CardHeader>
-            <CardTitle>Supported Demo Test Cases</CardTitle>
-            <CardDescription className="text-muted-foreground">Try these scenarios during the demo to test the agent's edge case handling capabilities.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <CheckCircleIcon size={24} className="text-green-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">1. The "Golden Path"</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Provide details for a clear-cut auto accident (rear-ended, injured, other party at fault). The agent will smoothly gather all required information step-by-step, qualify the lead, and proceed to wrap-up.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <XCircleIcon size={24} className="text-red-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">2. The Unqualified Lead</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Describe an incident with no third-party liability (e.g., slipping in your own driveway). The agent will recognize the criteria mismatch and gracefully reject the lead without offering legal advice.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <WarningCircleIcon size={24} className="text-amber-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">3. The Barge-In (Interruption)</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Interrupt the agent mid-sentence with an out-of-band question (e.g., "Wait, are you a robot?"). The system will instantly halt audio playback, address the question, and seamlessly return to the intake script.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <FastForwardIcon size={24} className="text-blue-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">4. The Over-Sharer (Fast-Forwarding)</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Provide multiple pieces of information (incident, injuries, liability) in one breath. The underlying FSM will extract all entities concurrently and fast-forward past redundant questions.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <UserMinusIcon size={24} className="text-purple-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">5. Contact Refusal (Zod Fallbacks)</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Refuse to provide your name or email when asked. The system will leverage fallback schemas to log the fields as "REFUSED" and continue the flow without getting trapped in an infinite loop.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
-                <MicrophoneSlashIcon size={24} className="text-rose-500 mt-0.5 shrink-0" weight="fill" />
-                <div>
-                  <strong className="text-foreground block mb-1">6. Recording Refusal (TCPA)</strong>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Say "No" when the agent asks for permission to record the call during the greeting. The agent will strictly enforce compliance by acknowledging the refusal and immediately terminating the call.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
     </div>

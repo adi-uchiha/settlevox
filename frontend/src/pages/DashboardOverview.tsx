@@ -32,6 +32,7 @@ export function DashboardOverview() {
   const textColor = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
   const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
+  const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalCalls: 0,
     answeredCalls: 0,
@@ -63,6 +64,7 @@ export function DashboardOverview() {
             lastStatsStr = statsStr;
             setStats(data);
           }
+          setIsLoading(false);
         }
       } catch (e) {
         console.error('Failed to fetch stats:', e);
@@ -162,10 +164,19 @@ export function DashboardOverview() {
             <PhoneCallIcon size={20} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalCalls} <span className="text-sm font-normal text-muted-foreground">({stats.answeredCalls} ANSWERED)</span></div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-              <Badge className="bg-primary/20 text-primary hover:bg-primary/20">+100%</Badge> vs last period
-            </p>
+            {isLoading ? (
+              <div className="space-y-3 mt-1">
+                <div className="h-7 w-32 bg-muted animate-pulse rounded-md" />
+                <div className="h-4 w-40 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{stats.totalCalls} <span className="text-sm font-normal text-muted-foreground">({stats.answeredCalls} ANSWERED)</span></div>
+                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                  <Badge className="bg-primary/20 text-primary hover:bg-primary/20">+100%</Badge> vs last period
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
         
@@ -175,7 +186,13 @@ export function DashboardOverview() {
             <ClockIcon size={20} className="text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{Math.floor(stats.talkTimeMinutes / 60)}h {stats.talkTimeMinutes % 60}m</div>
+            {isLoading ? (
+              <div className="mt-1">
+                <div className="h-7 w-24 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <div className="text-2xl font-bold">{Math.floor(stats.talkTimeMinutes / 60)}h {stats.talkTimeMinutes % 60}m</div>
+            )}
           </CardContent>
         </Card>
 
@@ -185,10 +202,19 @@ export function DashboardOverview() {
             <TimerIcon size={20} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{Math.floor(stats.timeSavedMinutes / 60)}h {stats.timeSavedMinutes % 60}m</div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-              <Badge className="bg-green-500/20 text-green-500 hover:bg-green-500/20">+100%</Badge> paralegal hours saved
-            </p>
+            {isLoading ? (
+              <div className="space-y-3 mt-1">
+                <div className="h-7 w-24 bg-muted animate-pulse rounded-md" />
+                <div className="h-4 w-44 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{Math.floor(stats.timeSavedMinutes / 60)}h {stats.timeSavedMinutes % 60}m</div>
+                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                  <Badge className="bg-green-500/20 text-green-500 hover:bg-green-500/20">+100%</Badge> paralegal hours saved
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -201,14 +227,23 @@ export function DashboardOverview() {
             <CheckCircleIcon size={20} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.qualificationRate}%</div>
-            <p className="text-xs mt-1">
-              {stats.qualificationRate > 20 ? (
-                <Badge className="bg-green-500/20 text-green-500">GOOD</Badge>
-              ) : (
-                <Badge className="bg-red-500/20 text-red-500">LOW</Badge>
-              )}
-            </p>
+            {isLoading ? (
+              <div className="space-y-3 mt-1">
+                <div className="h-7 w-20 bg-muted animate-pulse rounded-md" />
+                <div className="h-5 w-14 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{stats.qualificationRate}%</div>
+                <p className="text-xs mt-1">
+                  {stats.qualificationRate > 20 ? (
+                    <Badge className="bg-green-500/20 text-green-500">GOOD</Badge>
+                  ) : (
+                    <Badge className="bg-red-500/20 text-red-500">LOW</Badge>
+                  )}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -218,10 +253,19 @@ export function DashboardOverview() {
             <TargetIcon size={20} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.completionRate}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Reached WRAP_UP phase
-            </p>
+            {isLoading ? (
+              <div className="space-y-3 mt-1">
+                <div className="h-7 w-20 bg-muted animate-pulse rounded-md" />
+                <div className="h-4 w-32 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{stats.completionRate}%</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Reached WRAP_UP phase
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -231,10 +275,19 @@ export function DashboardOverview() {
             <UserCircleIcon size={20} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.transferAnswerRate}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.answeredCalls} connected / {stats.totalCalls - stats.answeredCalls} no answer
-            </p>
+            {isLoading ? (
+              <div className="space-y-3 mt-1">
+                <div className="h-7 w-20 bg-muted animate-pulse rounded-md" />
+                <div className="h-4 w-44 bg-muted animate-pulse rounded-md" />
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{stats.transferAnswerRate}%</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.answeredCalls} connected / {stats.totalCalls - stats.answeredCalls} no answer
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -246,9 +299,13 @@ export function DashboardOverview() {
             <CardTitle>Call Volume Overview</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full">
-              <Bar data={barChartData} options={chartOptions} />
-            </div>
+            {isLoading ? (
+              <div className="h-[300px] w-full bg-muted/30 animate-pulse rounded-md" />
+            ) : (
+              <div className="h-[300px] w-full">
+                <Bar data={barChartData} options={chartOptions} />
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -257,9 +314,13 @@ export function DashboardOverview() {
             <CardTitle>Actions Taken</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full flex items-center justify-center">
-              <Doughnut data={donutData} options={donutOptions} />
-            </div>
+            {isLoading ? (
+              <div className="h-[300px] w-full bg-muted/30 animate-pulse rounded-md" />
+            ) : (
+              <div className="h-[300px] w-full flex items-center justify-center">
+                <Doughnut data={donutData} options={donutOptions} />
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

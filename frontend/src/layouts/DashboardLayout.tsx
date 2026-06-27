@@ -74,7 +74,7 @@ export function DashboardLayout() {
         </header>
 
         <div className="p-8 flex-1 overflow-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="w-full">
             <Outlet />
           </div>
         </div>
