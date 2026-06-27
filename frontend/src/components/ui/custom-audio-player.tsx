@@ -18,12 +18,15 @@ export function CustomAudioPlayer({ src }: CustomAudioPlayerProps) {
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fetch the audio as a blob to allow seeking and determine duration accurately
   useEffect(() => {
     setIsLoading(true);
+    
     fetch(src)
-      .then(response => response.blob())
-      .then(blob => {
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         setIsLoading(false);
@@ -39,6 +42,10 @@ export function CustomAudioPlayer({ src }: CustomAudioPlayerProps) {
       }
     };
   }, [src]);
+
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -62,6 +69,10 @@ export function CustomAudioPlayer({ src }: CustomAudioPlayerProps) {
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', onEnded);
 
+    if (audio.readyState >= 1) {
+      updateDuration();
+    }
+
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
@@ -69,13 +80,48 @@ export function CustomAudioPlayer({ src }: CustomAudioPlayerProps) {
     };
   }, [audioUrl]);
 
+  const initWebAudio = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (!audioContextRef.current) {
+      try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        const ctx = new AudioContext();
+        
+        const source = ctx.createMediaElementSource(audio);
+        const gainNode = ctx.createGain();
+        
+        gainNode.gain.value = 3.5;
+        
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        audioContextRef.current = ctx;
+        sourceNodeRef.current = source;
+        gainNodeRef.current = gainNode;
+      } catch (err) {
+        console.error('Web Audio API failed to initialize:', err);
+      }
+    }
+
+    if (audioContextRef.current?.state === 'suspended') {
+      audioContextRef.current.resume().catch(e => {
+        console.error('Failed to resume AudioContext:', e);
+      });
+    }
+  };
+
   const togglePlayPause = () => {
     if (!audioRef.current) return;
+    
+    // Attempt to boost volume on user interaction
+    initWebAudio();
     
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(e => console.error("Play error:", e));
     }
     setIsPlaying(!isPlaying);
   };
@@ -118,7 +164,7 @@ export function CustomAudioPlayer({ src }: CustomAudioPlayerProps) {
 
   return (
     <div className="w-full bg-secondary/30 rounded-md border border-border p-2 px-3 flex items-center gap-2">
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="metadata" crossOrigin="anonymous" />
       
       <Button 
         variant="ghost" 
