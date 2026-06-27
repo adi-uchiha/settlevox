@@ -101,9 +101,7 @@ export class Orchestrator {
 
   private handleInterimTranscript(text: string) {
     if (text.length <= 3 || text.startsWith('[')) return;
-    // Don't react to caller speech during terminal phases — the call is wrapping up
-    const phaseName = this.fsm.getCurrentPhase().name;
-    if (phaseName === 'DISQUALIFICATION') return;
+    // Removed terminal phase block to allow caller to ask final questions
 
     this.resetSilenceTimer();
     if (this.isAgentSpeaking) {
@@ -122,12 +120,7 @@ export class Orchestrator {
       this.conversationHistory += `\nCaller: ${text}`;
       this.transcriptData.push({ speaker: 'caller', text, timestamp: Date.now() });
 
-      // Guard: ignore all caller input during terminal phases — the goodbye is already playing
-      const phaseName = this.fsm.getCurrentPhase().name;
-      if (phaseName === 'DISQUALIFICATION') {
-        logger.info({ callId: this.callId, phase: phaseName }, 'Terminal phase active — ignoring caller input, call is ending.');
-        return;
-      }
+      // Removed terminal phase block to allow caller to ask final questions
 
       this.resetSilenceTimer();
 
@@ -322,8 +315,7 @@ export class Orchestrator {
 
   private resetSilenceTimer() {
     this.clearSilenceTimer();
-    const phase = this.fsm.getCurrentPhase().name;
-    if (phase === 'DISQUALIFICATION') return;
+    // Allow silence timer to run during disqualification/wrap-up phases
     
     this.silenceTimer = setTimeout(() => {
       // Don't fire silence prompt while agent is still speaking or generating

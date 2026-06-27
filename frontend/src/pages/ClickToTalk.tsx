@@ -3,7 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PhoneCallIcon } from '@phosphor-icons/react';
+import { 
+  PhoneCallIcon, 
+  CheckCircleIcon, 
+  XCircleIcon, 
+  WarningCircleIcon, 
+  FastForwardIcon, 
+  UserMinusIcon, 
+  MicrophoneSlashIcon 
+} from '@phosphor-icons/react';
 import { API_BASE_URL } from '../config';
 
 export function ClickToTalk() {
@@ -203,6 +211,76 @@ export function ClickToTalk() {
             </CardContent>
           </Card>
         </div>
+
+        <Card className="border-border bg-card mt-6">
+          <CardHeader>
+            <CardTitle>Supported Demo Test Cases</CardTitle>
+            <CardDescription className="text-muted-foreground">Try these scenarios during the demo to test the agent's edge case handling capabilities.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <CheckCircleIcon size={24} className="text-green-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">1. The "Golden Path"</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Provide details for a clear-cut auto accident (rear-ended, injured, other party at fault). The agent will smoothly gather all required information step-by-step, qualify the lead, and proceed to wrap-up.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <XCircleIcon size={24} className="text-red-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">2. The Unqualified Lead</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Describe an incident with no third-party liability (e.g., slipping in your own driveway). The agent will recognize the criteria mismatch and gracefully reject the lead without offering legal advice.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <WarningCircleIcon size={24} className="text-amber-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">3. The Barge-In (Interruption)</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Interrupt the agent mid-sentence with an out-of-band question (e.g., "Wait, are you a robot?"). The system will instantly halt audio playback, address the question, and seamlessly return to the intake script.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <FastForwardIcon size={24} className="text-blue-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">4. The Over-Sharer (Fast-Forwarding)</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Provide multiple pieces of information (incident, injuries, liability) in one breath. The underlying FSM will extract all entities concurrently and fast-forward past redundant questions.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <UserMinusIcon size={24} className="text-purple-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">5. Contact Refusal (Zod Fallbacks)</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Refuse to provide your name or email when asked. The system will leverage fallback schemas to log the fields as "REFUSED" and continue the flow without getting trapped in an infinite loop.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start bg-secondary/30 p-4 rounded-lg border border-border/50">
+                <MicrophoneSlashIcon size={24} className="text-rose-500 mt-0.5 shrink-0" weight="fill" />
+                <div>
+                  <strong className="text-foreground block mb-1">6. Recording Refusal (TCPA)</strong>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Say "No" when the agent asks for permission to record the call during the greeting. The agent will strictly enforce compliance by acknowledging the refusal and immediately terminating the call.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
     </div>

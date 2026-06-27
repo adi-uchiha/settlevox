@@ -51,7 +51,7 @@ export const INTAKE_PHASES: Record<PhaseName, Phase> = {
   QUALIFICATION: {
     name: 'QUALIFICATION',
     requiredFields: ['is_qualified'],
-    prompt: 'Analyze the information. If they have injuries, another party is at fault, and there is insurance, they may be qualified. Tell them you would like to connect them with an attorney and collect their full name and best callback phone number.',
+    prompt: 'Analyze the information. If they have injuries, another party is at fault, and there is insurance, they may be qualified. State that an attorney will need to review their case and call them back. Ask for their full name and best callback phone number.',
     next: 'WRAP_UP',
   },
   DISQUALIFICATION: {
@@ -80,6 +80,12 @@ export class IntakeFSM {
         prompt: 'Politely inform the caller that the firm may not be the best fit for their specific situation, as there is no third-party liability. Do NOT collect contact info or ask questions. Ask if they have any other questions or if they would like to end the call. Only when the user explicitly confirms they want to end the call, say a final goodbye.'
       };
     }
+    if (phase.name === 'DISQUALIFICATION' && this.extractedData.qualification_reason === 'consent_refused') {
+      return {
+        ...phase,
+        prompt: 'The caller refused to be recorded. Acknowledge this politely, state that we cannot proceed with the automated intake without recording consent, and ask if they have any other questions. Only say a final goodbye and end the call after they explicitly confirm they have no more questions or want to end the call.'
+      };
+    }
     return phase;
   }
 
@@ -104,6 +110,18 @@ export class IntakeFSM {
       this.extractedData.qualification_reason = 'No third-party liability / occurred on own property.';
       this.extractedData.insurance_info_available = false; // Skip insurance collection
       // Jump to DISQUALIFICATION phase so agent can speak the decline message first
+      this.currentPhase = 'DISQUALIFICATION';
+      return;
+    }
+
+    // Fast-track logic for recording consent refusal
+    if (
+      (this.extractedData.consent_given === false || this.extractedData.consent_given === 'REFUSED') &&
+      this.currentPhase !== 'DISQUALIFICATION' &&
+      this.currentPhase !== 'WRAP_UP'
+    ) {
+      this.extractedData.is_qualified = false;
+      this.extractedData.qualification_reason = 'consent_refused';
       this.currentPhase = 'DISQUALIFICATION';
       return;
     }

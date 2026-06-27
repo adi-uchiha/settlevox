@@ -90,4 +90,70 @@ This document outlines 3 realistic use cases for manual end-to-end testing of th
 - **Context Retention:** Agent handles the out-of-band questions (fee structure, AI identity) without breaking character or losing the overarching goal (collecting intake data).
 - **Dashboard Data:** Accurate transcript reflecting the interruptions, sentiment analysis might mark as "impatient" or "neutral."
 
+---
 
+## Use Case 4: The Over-Sharer (Testing FSM Fast-Forwarding)
+
+**Objective:** Verify that the state machine correctly parses multiple pieces of data in a single turn and skips redundant FSM phases (fast-forwarding) instead of asking for information already provided.
+
+### Caller Profile
+- **Name:** David Miller
+- **Behavior:** Speaks in long paragraphs, provides incident, injury, and liability info before being asked.
+
+### Testing Script / Flow
+1. **[Greeting]** Agent answers and asks for permission to record.
+   - **Tester says:** "Yes, go ahead. Look, I was rear-ended on I-35 yesterday in Dallas. The other guy got a ticket, but my neck hurts really bad and I'm headed to the ER right now. Geico is his insurance."
+2. **[FSM Fast-Forward]** The agent should recognize that Incident, Injury, Liability, and Insurance phases have been fulfilled.
+   - **Agent behavior:** Should *not* ask "What happened?" or "Were you injured?". It should immediately acknowledge the situation, confirm any missing details (e.g., confirming if the tester has their own insurance), or jump straight to Qualification.
+   - **Tester says:** "I have Progressive."
+3. **[Qualification & Wrap-Up]** Agent asks for contact info.
+   - **Tester says:** "David Miller, call me back at this number."
+
+### Expected Outcome
+- **FSM State:** Quickly advances from `Greeting` straight to `Qualification` / `WRAP_UP`.
+- **Dashboard Data:** All fields populated correctly despite being extracted from a single turn.
+
+---
+
+## Use Case 5: Refusal of Contact Information (Testing Fallbacks)
+
+**Objective:** Test the FSM refusal handlers and Zod schema fallbacks. Ensure the LLM correctly outputs "REFUSED" and the system does not crash or get stuck in an infinite loop asking for the same data.
+
+### Caller Profile
+- **Name:** Anonymous (Refuses to give name or email)
+- **Incident:** Standard qualified auto accident.
+
+### Testing Script / Flow
+1. **[Greeting to Insurance]** Go through the standard flow to reach the Qualification phase.
+   - **Tester says:** "Yes I was in an accident, other person at fault, I broke my leg, they had insurance."
+2. **[Qualification]** Agent determines the lead is qualified and asks for full name and email to connect with an attorney.
+   - **Tester says:** "I don't want to give my name or email right now. Just have a lawyer call this number."
+3. **[Handling]** Agent should accept the refusal gracefully, rather than repeatedly demanding the email address.
+   - **Tester says:** "No, just the number is fine."
+4. **[Wrap-Up]** Agent concludes the call.
+
+### Expected Outcome
+- **FSM Loop Prevention:** Agent does not get stuck in an infinite loop asking for the email.
+- **Dashboard Data:** `caller_email` and `caller_name` should be logged as `REFUSED` or `UNKNOWN` without causing a Zod schema validation crash. `is_qualified: true`.
+
+---
+
+## Use Case 6: Refusal of Recording / TCPA Compliance Check
+
+**Objective:** Verify that the system respects caller consent and gracefully terminates the call if recording permission is denied during the Greeting phase.
+
+### Caller Profile
+- **Name:** Privacy Advocate
+
+### Testing Script / Flow
+1. **[Greeting]** Agent answers and says: "...This call may be recorded for quality purposes. Is that okay?"
+   - **Tester says:** "No, I do not consent to being recorded."
+2. **[Termination]** Agent must acknowledge the refusal, state it cannot continue, and ask if the user has any other questions.
+   - **Agent behavior:** "I understand. Unfortunately, we cannot proceed with the automated intake without recording consent. Do you have any other questions for me today?"
+   - **Tester says:** "No, that's it."
+3. **[Wrap-up]** Agent says goodbye and ends call.
+   - **Agent behavior:** "Okay, goodbye!"
+
+### Expected Outcome
+- **FSM State:** Immediately jumps to an `End` or `Terminal` state.
+- **Dashboard Data:** Call logged as `INCOMPLETE` or `ERROR` with reason `consent_refused`. Extracted data remains empty.
