@@ -15,6 +15,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Web portal endpoints
 app.post('/api/request-call', handleTwilioRequestCall);
 app.post('/api/end-call', handleTwilioEndCall);
