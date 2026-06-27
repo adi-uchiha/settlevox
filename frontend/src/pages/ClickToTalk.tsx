@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PhoneCallIcon, MicrophoneStageIcon } from '@phosphor-icons/react';
+import { PhoneCallIcon } from '@phosphor-icons/react';
 import { API_BASE_URL } from '../config';
 
 export function ClickToTalk() {

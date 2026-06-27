@@ -4,7 +4,6 @@ import { DashboardLayout } from './layouts/DashboardLayout';
 import { DashboardOverview } from './pages/DashboardOverview';
 import { CallsList } from './pages/CallsList';
 import { CallDetails } from './pages/CallDetails';
-import { useEffect } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 function App() {
