@@ -1,0 +1,29 @@
+<svg width="1000" height="250" viewBox="0 0 1000 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="1000" y2="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f0f0f" />
+      <stop offset="50%" stop-color="#1a1a1a" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0562EF" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0562EF" stop-opacity="0.1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="250" fill="url(#bg-gradient)" />
+  <rect x="0" y="246" width="1000" height="4" fill="url(#accent-gradient)" />
+
+  <g transform="translate(80, 50)">
+    <!-- Logo (Scaled to ~120x120) -->
+    <g transform="scale(0.065)">
+      <path d="M497.665 149.447C511.771 148.786 526.964 149.356 541.055 149.859C496.043 200.383 462.572 248.572 457.263 319.487C453.844 365.158 471.309 410.819 497.832 447.801C552.783 524.419 634.814 588.644 706.487 649.296C811.707 738.335 922.947 821.632 1014.62 925.049C1107.2 1029.5 1186.12 1156.14 1178.03 1300.81C1171.92 1410 1110.58 1511.37 1029.97 1582.4C923.187 1676.5 782.037 1721.92 640.544 1713.42C629.024 1712.7 617.061 1711.53 605.522 1710.56C684.337 1621.87 736.349 1520.83 731.153 1399C727.968 1338.24 708.966 1271.67 672.445 1221.41C600.891 1123.4 496.453 1048.97 404.223 971.421C354.563 929.664 306.03 892.416 254.509 853.416C223.66 830.231 193.905 805.625 165.34 779.677C83.0278 704.757 5.6258 605.384 0.343796 489.551C-3.2802 418.307 21.8658 348.594 70.1338 296.068C147.006 212.432 275.465 174.931 384.537 158.454C420.656 152.997 461.112 150.956 497.665 149.447Z" fill="#0562EF"/>
+      <path d="M1353.3 148.5H1863.58L1356.41 1017.86L1266.25 1172.7C1219.45 994.677 1134.94 879.733 999.477 756.775C1005.24 744.622 1020.09 721.984 1027.41 709.1L1106.72 572.482L1229.12 362.28C1255.82 316.25 1325.91 194.015 1353.3 148.5Z" fill="#0562EF"/>
+    </g>
+    
+    <!-- Text -->
+    <text x="160" y="80" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif" font-size="64" font-weight="700" fill="#ffffff" letter-spacing="-1">SettleVox</text>
+    <text x="165" y="115" font-family="'DM Sans', 'Inter', system-ui, sans-serif" font-size="20" font-weight="400" fill="#a1a1aa" letter-spacing="1">AI VOICE AGENT FOR PERSONAL INJURY LAW FIRMS</text>
+  </g>
+</svg>
