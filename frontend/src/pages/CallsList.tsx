@@ -39,6 +39,15 @@ export function CallsList() {
 
   const [calls, setCalls] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     async function fetchCalls() {
@@ -104,91 +113,154 @@ export function CallsList() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Left Panel: Table */}
+        {/* Left Panel: Table or Cards */}
         <Card className="col-span-1 xl:col-span-3 border-border">
           <CardHeader>
             <CardTitle>Recent Calls</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead>Phone Number</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Outcome</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i} className="animate-pulse border-border">
-                      <TableCell><div className="h-5 bg-muted rounded w-32"></div></TableCell>
-                      <TableCell><div className="h-5 bg-muted rounded w-40"></div></TableCell>
-                      <TableCell><div className="h-5 bg-muted rounded w-16"></div></TableCell>
-                      <TableCell><div className="h-5 bg-muted rounded w-20"></div></TableCell>
-                      <TableCell><div className="h-5 bg-muted rounded w-20"></div></TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  calls.map((call) => (
-                    <TableRow 
-                      key={call.call_id} 
-                      className="cursor-pointer hover:bg-secondary/50 border-border transition-colors"
-                      onClick={() => navigate(`/dashboard/calls/${call.call_id}`)}
-                    >
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          <PhoneIcon className="text-muted-foreground" />
-                          {call.phone_number || 'Unknown'}
-                          {call.phone_number && (
-                            <button 
-                              onClick={(e) => copyToClipboard(call.phone_number, e)}
-                              className="text-muted-foreground hover:text-foreground transition-colors p-1"
-                              title="Copy Phone Number"
-                            >
-                              {copiedId === call.phone_number ? <CheckIcon className="text-green-500" /> : <CopyIcon />}
-                            </button>
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead>Phone Number</TableHead>
+                    <TableHead>Date & Time</TableHead>
+                    <TableHead>Duration</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Outcome</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i} className="animate-pulse border-border">
+                        <TableCell><div className="h-5 bg-muted rounded w-32"></div></TableCell>
+                        <TableCell><div className="h-5 bg-muted rounded w-40"></div></TableCell>
+                        <TableCell><div className="h-5 bg-muted rounded w-16"></div></TableCell>
+                        <TableCell><div className="h-5 bg-muted rounded w-20"></div></TableCell>
+                        <TableCell><div className="h-5 bg-muted rounded w-20"></div></TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    calls.map((call) => (
+                      <TableRow 
+                        key={call.call_id} 
+                        className="cursor-pointer hover:bg-secondary/50 border-border transition-colors"
+                        onClick={() => navigate(`/dashboard/calls/${call.call_id}`)}
+                      >
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <PhoneIcon className="text-muted-foreground" />
+                            {call.phone_number || 'Unknown'}
+                            {call.phone_number && (
+                              <button 
+                                onClick={(e) => copyToClipboard(call.phone_number, e)}
+                                className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                                title="Copy Phone Number"
+                              >
+                                {copiedId === call.phone_number ? <CheckIcon className="text-green-500" /> : <CopyIcon />}
+                              </button>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <CalendarIcon />
+                            {call.started_at ? new Date(call.started_at).toLocaleString() : 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <TimerIcon />
+                            {call.duration_seconds !== undefined && call.duration_seconds !== null ? `${call.duration_seconds}s` : '0s'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={`capitalize ${
+                            call.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                            call.status === 'in-progress' || call.status === 'ringing' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                            call.status === 'failed' || call.status === 'error' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                            'bg-gray-500/10 text-gray-500 border-gray-500/20'
+                          }`}>
+                            {call.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {call.extracted_data?.is_qualified === true ? (
+                            <Badge className="bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500/20">Qualified</Badge>
+                          ) : call.extracted_data?.is_qualified === false ? (
+                            <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20">Unqualified</Badge>
+                          ) : (
+                            <Badge className="bg-gray-500/10 text-gray-500 border border-gray-500/20 hover:bg-gray-500/20">Incomplete</Badge>
                           )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <CalendarIcon />
-                          {call.started_at ? new Date(call.started_at).toLocaleString() : 'N/A'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <TimerIcon />
-                          {call.duration_seconds !== undefined && call.duration_seconds !== null ? `${call.duration_seconds}s` : '0s'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={`capitalize ${
-                          call.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
-                          call.status === 'in-progress' || call.status === 'ringing' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                          call.status === 'failed' || call.status === 'error' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                          'bg-gray-500/10 text-gray-500 border-gray-500/20'
-                        }`}>
-                          {call.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {call.extracted_data?.is_qualified === true ? (
-                          <Badge className="bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500/20">Qualified</Badge>
-                        ) : call.extracted_data?.is_qualified === false ? (
-                          <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20">Unqualified</Badge>
-                        ) : (
-                          <Badge className="bg-gray-500/10 text-gray-500 border border-gray-500/20 hover:bg-gray-500/20">Incomplete</Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="md:hidden space-y-4">
+              {loading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="animate-pulse border border-border rounded-lg p-4 space-y-3">
+                    <div className="h-5 bg-muted rounded w-2/3"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                    <div className="h-4 bg-muted rounded w-1/3"></div>
+                  </div>
+                ))
+              ) : calls.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground text-sm">No calls found.</div>
+              ) : (
+                calls.map((call) => (
+                  <div
+                    key={call.call_id}
+                    onClick={() => navigate(`/dashboard/calls/${call.call_id}`)}
+                    className="border border-border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-secondary/30 transition-colors"
+                  >
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex items-center gap-1.5 font-medium text-sm min-w-0">
+                        <PhoneIcon className="text-muted-foreground shrink-0" size={16} />
+                        <span className="truncate">{call.phone_number || 'Unknown'}</span>
+                      </div>
+                      <Badge variant="outline" className={`capitalize shrink-0 text-[10px] py-0.5 px-1.5 ${
+                        call.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                        call.status === 'in-progress' || call.status === 'ringing' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                        call.status === 'failed' || call.status === 'error' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                        'bg-gray-500/10 text-gray-500 border-gray-500/20'
+                      }`}>
+                        {call.status}
+                      </Badge>
+                    </div>
+
+                    <div className="flex justify-between items-center text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <CalendarIcon size={14} />
+                        <span>{call.started_at ? new Date(call.started_at).toLocaleDateString() : 'N/A'}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <TimerIcon size={14} />
+                        <span>{call.duration_seconds !== undefined && call.duration_seconds !== null ? `${call.duration_seconds}s` : '0s'}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-border/50 flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Outcome:</span>
+                      {call.extracted_data?.is_qualified === true ? (
+                        <Badge className="bg-green-500/10 text-green-500 border border-green-500/20 text-[10px] py-0 px-2 hover:bg-green-500/15">Qualified</Badge>
+                      ) : call.extracted_data?.is_qualified === false ? (
+                        <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 text-[10px] py-0 px-2 hover:bg-red-500/15">Unqualified</Badge>
+                      ) : (
+                        <Badge className="bg-gray-500/10 text-gray-500 border border-gray-500/20 text-[10px] py-0 px-2 hover:bg-gray-500/15">Incomplete</Badge>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -219,7 +291,7 @@ export function CallsList() {
                     maintainAspectRatio: false,
                     plugins: {
                       legend: {
-                        position: 'right' as const,
+                        position: isMobile ? 'bottom' as const : 'right' as const,
                         labels: { color: textColor, font: { size: 10 } }
                       }
                     }

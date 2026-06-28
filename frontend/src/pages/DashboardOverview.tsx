@@ -33,6 +33,7 @@ export function DashboardOverview() {
   const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [stats, setStats] = useState({
     totalCalls: 0,
     answeredCalls: 0,
@@ -42,6 +43,14 @@ export function DashboardOverview() {
     completionRate: 0,
     transferAnswerRate: 0,
   });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     let timeoutId: number | undefined;
@@ -135,7 +144,7 @@ export function DashboardOverview() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right' as const,
+        position: isMobile ? 'bottom' as const : 'right' as const,
         labels: { color: textColor }
       },
     },
@@ -172,9 +181,9 @@ export function DashboardOverview() {
             ) : (
               <>
                 <div className="text-2xl font-bold">{stats.totalCalls} <span className="text-sm font-normal text-muted-foreground">({stats.answeredCalls} ANSWERED)</span></div>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
                   <Badge className="bg-primary/20 text-primary hover:bg-primary/20">+100%</Badge> vs last period
-                </p>
+                </div>
               </>
             )}
           </CardContent>
@@ -210,9 +219,9 @@ export function DashboardOverview() {
             ) : (
               <>
                 <div className="text-2xl font-bold">{Math.floor(stats.timeSavedMinutes / 60)}h {stats.timeSavedMinutes % 60}m</div>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
                   <Badge className="bg-green-500/20 text-green-500 hover:bg-green-500/20">+100%</Badge> paralegal hours saved
-                </p>
+                </div>
               </>
             )}
           </CardContent>
@@ -235,13 +244,13 @@ export function DashboardOverview() {
             ) : (
               <>
                 <div className="text-2xl font-bold">{stats.qualificationRate}%</div>
-                <p className="text-xs mt-1">
+                <div className="text-xs mt-1">
                   {stats.qualificationRate > 20 ? (
                     <Badge className="bg-green-500/20 text-green-500">GOOD</Badge>
                   ) : (
                     <Badge className="bg-red-500/20 text-red-500">LOW</Badge>
                   )}
-                </p>
+                </div>
               </>
             )}
           </CardContent>

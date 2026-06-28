@@ -103,17 +103,19 @@ export function CallDetails() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate('/dashboard/calls')} className="border-border rounded-full">
-          <ArrowLeftIcon size={18} />
-        </Button>
-        <div>
-          <h2 className="text-3xl font-display font-medium tracking-tight">Call {mockCallData.phone}</h2>
-          <p className="text-muted-foreground mt-1">
-            {new Date(mockCallData.date).toLocaleString()} • {mockCallData.duration}
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <Button variant="outline" size="icon" onClick={() => navigate('/dashboard/calls')} className="border-border rounded-full shrink-0">
+            <ArrowLeftIcon size={18} />
+          </Button>
+          <div className="min-w-0">
+            <h2 className="text-2xl sm:text-3xl font-display font-medium tracking-tight truncate">Call {mockCallData.phone}</h2>
+            <p className="text-muted-foreground mt-1 text-xs sm:text-sm truncate">
+              {new Date(mockCallData.date).toLocaleString()} • {mockCallData.duration}
+            </p>
+          </div>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
           {mockCallData.status === 'completed' || mockCallData.isQualified ? (
             mockCallData.isQualified ? (
               <Badge className="bg-primary text-primary-foreground animate-in fade-in zoom-in">Qualified Lead</Badge>
@@ -214,7 +216,7 @@ export function CallDetails() {
         </div>
 
         {/* Transcript Panel */}
-        <Card className="col-span-1 border-border bg-card flex flex-col h-full overflow-hidden relative">
+        <Card className="col-span-1 border-border bg-card flex flex-col min-h-[450px] lg:h-full overflow-hidden relative">
           <CardHeader className="shrink-0 relative z-10 bg-card">
             <CardTitle>Conversation Transcript</CardTitle>
           </CardHeader>
