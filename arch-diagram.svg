@@ -52,8 +52,8 @@
   </svg>
 
   <!-- 3. AI Providers Group -->
-  <rect x="720" y="80" width="180" height="510" rx="12" fill="#fafafa" stroke="#f1f5f9" stroke-width="1.5" filter="url(#shadow-group)"/>
-  <text x="735" y="102" class="group-title">AI Providers</text>
+  <rect x="820" y="80" width="180" height="510" rx="12" fill="#fafafa" stroke="#f1f5f9" stroke-width="1.5" filter="url(#shadow-group)"/>
+  <text x="835" y="102" class="group-title">AI Providers</text>
 
 
   <!-- ================= SYSTEM NODES ================= -->
@@ -162,7 +162,7 @@
   </g>
 
   <!-- N8: Cartesia STT (AI top, container-free green icon) -->
-  <g transform="translate(740, 130)">
+  <g transform="translate(840, 130)">
     <rect width="140" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#shadow-card)"/>
     <!-- Cartesia Logo (no container, original green color #004e23) -->
     <svg x="50" y="8" width="40" height="40" viewBox="0 0 22 20">
@@ -173,7 +173,7 @@
   </g>
 
   <!-- N9: Groq API (AI center, container-free orange icon, fixed viewBox aspect ratio/centering) -->
-  <g transform="translate(740, 290)">
+  <g transform="translate(840, 290)">
     <rect width="140" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#shadow-card)"/>
     <!-- Groq Logo (no container, original orange color #f97316, nested inside official 201x201 viewBox to prevent clipping/overflow) -->
     <svg x="50" y="8" width="40" height="40" viewBox="0 0 201 201">
@@ -184,7 +184,7 @@
   </g>
 
   <!-- N10: Cartesia TTS (AI bottom, container-free green icon) -->
-  <g transform="translate(740, 450)">
+  <g transform="translate(840, 450)">
     <rect width="140" height="90" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#shadow-card)"/>
     <!-- Cartesia Logo (no container, original green color #004e23) -->
     <svg x="50" y="8" width="40" height="40" viewBox="0 0 22 20">
@@ -223,34 +223,34 @@
   <text x="570" y="243" class="label-text" text-anchor="middle">buffered</text>
 
   <!-- Agent Orchestrator FSM → Cartesia STT -->
-  <path d="M 660 300 L 700 300 Q 710 300 710 290 L 710 185 Q 710 175 720 175 L 740 175" class="edge-blue" marker-end="url(#arr-blue)"/>
-  <rect x="668" y="210" width="54" height="14" class="label-bg"/>
-  <text x="695" y="220" class="label-text" fill="#3b82f6" text-anchor="middle">raw audio</text>
+  <path d="M 660 300 L 740 300 Q 750 300 750 290 L 750 185 Q 750 175 760 175 L 840 175" class="edge-blue" marker-end="url(#arr-blue)"/>
+  <rect x="673" y="293" width="54" height="14" class="label-bg"/>
+  <text x="700" y="303" class="label-text" fill="#3b82f6" text-anchor="middle">raw audio</text>
 
   <!-- Cartesia STT → Agent Orchestrator FSM -->
-  <path d="M 740 195 L 730 195 Q 720 195 720 205 L 720 310 Q 720 320 710 320 L 660 320" class="edge-grey" marker-end="url(#arr-grey)"/>
-  <rect x="672" y="325" width="52" height="14" class="label-bg"/>
-  <text x="698" y="335" class="label-text" text-anchor="middle">transcript</text>
+  <path d="M 840 195 L 800 195 Q 790 195 790 205 L 790 310 Q 790 320 780 320 L 660 320" class="edge-grey" marker-end="url(#arr-grey)"/>
+  <rect x="674" y="313" width="52" height="14" class="label-bg"/>
+  <text x="700" y="323" class="label-text" text-anchor="middle">transcript</text>
 
   <!-- Agent Orchestrator FSM → Groq (Prompt) -->
-  <path d="M 660 340 L 740 340" class="edge-grey" marker-end="url(#arr-grey)"/>
-  <rect x="682" y="343" width="46" height="14" class="label-bg"/>
-  <text x="705" y="353" class="label-text" text-anchor="middle">prompt</text>
+  <path d="M 660 340 L 840 340" class="edge-grey" marker-end="url(#arr-grey)"/>
+  <rect x="727" y="333" width="46" height="14" class="label-bg"/>
+  <text x="750" y="343" class="label-text" text-anchor="middle">prompt</text>
 
   <!-- Groq → Agent Orchestrator FSM (JSON Stream) -->
-  <path d="M 740 360 L 660 360" class="edge-grey" marker-end="url(#arr-grey)"/>
-  <rect x="678" y="365" width="54" height="14" class="label-bg"/>
-  <text x="705" y="375" class="label-text" text-anchor="middle">JSON stream</text>
+  <path d="M 840 360 L 660 360" class="edge-grey" marker-end="url(#arr-grey)"/>
+  <rect x="723" y="353" width="54" height="14" class="label-bg"/>
+  <text x="750" y="363" class="label-text" text-anchor="middle">JSON stream</text>
 
   <!-- Agent Orchestrator FSM → Cartesia TTS -->
-  <path d="M 660 380 L 700 380 Q 710 380 710 390 L 710 485 Q 710 495 720 495 L 740 495" class="edge-grey" marker-end="url(#arr-grey)"/>
-  <rect x="678" y="420" width="52" height="14" class="label-bg"/>
-  <text x="704" y="430" class="label-text" text-anchor="middle">text reply</text>
+  <path d="M 660 380 L 740 380 Q 750 380 750 390 L 750 485 Q 750 495 760 495 L 840 495" class="edge-grey" marker-end="url(#arr-grey)"/>
+  <rect x="674" y="373" width="52" height="14" class="label-bg"/>
+  <text x="700" y="383" class="label-text" text-anchor="middle">text reply</text>
 
   <!-- Cartesia TTS → Audio Buffer -->
-  <path d="M 740 475 L 685 475 Q 675 475 675 465 L 675 160 Q 675 150 665 150 L 660 150" class="edge-blue" marker-end="url(#arr-blue)"/>
-  <rect x="648" y="135" width="54" height="14" class="label-bg"/>
-  <text x="675" y="145" class="label-text" fill="#3b82f6" text-anchor="middle">PCM stream</text>
+  <path d="M 840 475 L 720 475 Q 710 475 710 465 L 710 160 Q 710 150 665 150 L 660 150" class="edge-blue" marker-end="url(#arr-blue)"/>
+  <rect x="658" y="143" width="54" height="14" class="label-bg"/>
+  <text x="685" y="153" class="label-text" fill="#3b82f6" text-anchor="middle">PCM stream</text>
 
   <!-- Audio Buffer → Twilio Outbound -->
   <path d="M 570 130 L 570 120 L 210 120 Q 200 120 200 130 L 200 340 Q 200 350 190 350 L 170 350" class="edge-blue" marker-end="url(#arr-blue)"/>
