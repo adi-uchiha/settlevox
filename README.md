@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./banner.svg" alt="SettleVox Banner" />
+  <img src="./docs/assets/banner.svg" alt="SettleVox Banner" />
 </div>
 
 
@@ -17,7 +17,7 @@ SettleVox is an end-to-end AI voice agent designed for Personal Injury (PI) law 
 ## 🏗️ Architecture
 
 <div align="center">
-  <img src="./arch-diagram.svg" alt="SettleVox System Architecture" />
+  <img src="./docs/assets/arch-diagram.svg" alt="SettleVox System Architecture" />
 </div>
 
 ### The Voice Pipeline Loop
