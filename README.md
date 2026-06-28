@@ -16,6 +16,10 @@ SettleVox is an end-to-end AI voice agent designed for Personal Injury (PI) law 
 
 ## 🏗️ Architecture
 
+<div align="center">
+  <img src="./arch-diagram.svg" alt="SettleVox System Architecture" />
+</div>
+
 ### The Voice Pipeline Loop
 `Twilio (Raw Audio) ➔ Cartesia STT ➔ Orchestrator (Node.js) ➔ Groq Llama-3.3-70b (LLM) ➔ Cartesia TTS ➔ Twilio (Raw Audio)`
 
